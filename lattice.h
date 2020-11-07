@@ -4,6 +4,8 @@
 
 #include <vector>
 #include <list>
+#include <map>
+#include <string>
 
 
 struct Cell {
@@ -22,13 +24,13 @@ struct Cell {
 class Lattice: public std::vector<std::vector<Cell>>{
     size_t latticeSize;
     double density;
-
+    std::map<std::string, double> parameters;
 
     std::list<std::pair<size_t, size_t>> boundary;
     std::list<std::pair<size_t, size_t>> complementOfClosure;
 
     public:
-        Lattice(size_t size, double density);
+        Lattice(size_t size, double density, std::map<std::string, double> parameters);
 
         void updateBoundaryAndComplementOfClosure();
 

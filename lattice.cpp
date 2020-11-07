@@ -8,7 +8,7 @@
 using namespace std;
 
 
-Lattice::Lattice(size_t size, double density): latticeSize(size) {
+Lattice::Lattice(size_t size, double density, std::map<std::string, double> parameters): latticeSize(size), parameters(parameters) {
     if (density < 0)
         throw logic_error("The density must be positive");
     density = density;
@@ -77,7 +77,7 @@ void Lattice::updateBoundaryAndComplementOfClosure() {
             neighbours = getNeighboursIndicesOf(i, j);
             // possiblity of using any_of and lambda function
             for (auto& neighbour: neighbours){
-                if ( (*this)[neighbour.first][neighbour.second].inSnowflake_before == true ) {
+                if ( (*this)[neighbour.first][neighbour.second].inSnowflake_before ) {
                     inBoundary = true;
                     break;
                 }
@@ -96,14 +96,33 @@ void Lattice::diffuse() {
     list<pair<long int, long int>> neighbours;
     double sum;
 
-    for (auto& cell: complementOfClosure) {
-        neighbours = getNeighboursIndicesOf(cell.first, cell.second);
+
+    for (auto indices=complementOfClosure.begin(); indices!=boundary.end(); indices++) {
+        if (indices == complementOfClosure.end())
+            indices = boundary.begin();
+
+        neighbours = getNeighboursIndicesOf(indices->first, indices->second);
 
         for (auto& neighbour: neighbours){
-            sum += (*this)[neighbour.first][neighbour.second].vaporMass_before;
+            if ( (*this)[neighbour.first][neighbour.second].inSnowflake_before )
+                sum += (*this)[indices->first][indices->second].vaporMass_before;
+            else
+                sum += (*this)[neighbour.first][neighbour.second].vaporMass_before;
         }
-        sum += (7-neighbours.size()) * (*this)[cell.first][cell.second].vaporMass_before;
+        sum += (7-neighbours.size()) * (*this)[indices->first][indices->second].vaporMass_before;
 
-        (*this)[cell.first][cell.second].liquidMass_after = sum/7;
+        (*this)[indices->first][indices->second].vaporMass_after = sum/7;
     }
+}
+
+void Lattice::freeze() {
+
+    for (auto& indices: boundary) {
+        Cell& cell = (*this)[indices.first][indices.second];
+
+        cell.liquidMass_after = cell.liquidMass_before + (1-parameters["kappa"]) * cell.vaporMass_before;
+        cell.solidMass_after = cell.solidMass_before + parameters["kappa"] * cell.vaporMass_before;
+        cell.vaporMass_after = 0;
+    }
+
 }
