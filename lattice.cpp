@@ -2,6 +2,7 @@
 #include <math.h>
 #include <algorithm>
 #include <random>
+#include <fstream>
 
 #include "lattice.h"
 
@@ -12,14 +13,11 @@ using namespace std;
 static std::mt19937 generator;
 
 
-Lattice::Lattice(size_t size, double density, std::map<std::string, double> parameters): latticeSize(size), parameters(parameters) {
-    if (density < 0)
-        throw logic_error("The density must be positive");
-    density = density;
-
+Lattice::Lattice(size_t size, std::map<std::string, double> parameters): latticeSize(size), parameters(parameters) {
     resize(size, vector<Cell>(size));
     freezeCenter();
     setDensityOutsideSnowflake();
+    updateBoundaryAndComplementOfClosure();
 }
 
 void Lattice::freezeCenter(){
@@ -36,8 +34,8 @@ void Lattice::setDensityOutsideSnowflake() {
         for (size_t j=i+1; j<latticeSize; j++){
 
             if (i != middle && j != middle) {
-                (*this)[i][j].vaporMass_before = density;
-                (*this)[j][i].vaporMass_before = density;
+                (*this)[i][j].vaporMass_before = parameters["rho"];
+                (*this)[j][i].vaporMass_before = parameters["rho"];
             }
         }
     }
@@ -102,8 +100,11 @@ void Lattice::diffuse() {
 
 
     for (auto indices=complementOfClosure.begin(); indices!=boundary.end(); indices++) {
-        if (indices == complementOfClosure.end())
+        if (indices == complementOfClosure.end()) {
+            if (boundary.empty())
+                break;
             indices = boundary.begin();
+        }
 
         neighbours = getNeighboursIndicesOf(indices->first, indices->second);
 
@@ -192,10 +193,13 @@ void Lattice::addNoise() {
     double perturbation;
 
     for (auto indices=complementOfClosure.begin(); indices!=boundary.end(); indices++) {
-        if (indices == complementOfClosure.end())
+        if (indices == complementOfClosure.end()) {
+            if (boundary.empty())
+                break;
             indices = boundary.begin();
+        }
 
-        Cell& cell = (*this)[indices.first][indices.second];
+        Cell& cell = (*this)[indices->first][indices->second];
 
 
         perturbation = (2*bernoulliDistribution(generator)-1) * parameters["sigma"];
@@ -225,5 +229,27 @@ void Lattice::updateValuesOnComplementOfClosure() {
         cell.liquidMass_before = cell.liquidMass_after;
         cell.solidMass_before = cell.solidMass_after;
         cell.vaporMass_before = cell.vaporMass_after;
+    }
+}
+
+void Lattice::saveTo(std::string fileName) const {
+    ofstream inSnowflake_fileStream(fileName + "_inSnowflake", ios::out|ios::binary);
+    ofstream vaporMass_fileStream(fileName + "_vapor", ios::out|ios::binary);
+    ofstream liquidMass_fileStream(fileName + "_liquid", ios::out|ios::binary);
+    ofstream solidMass_fileStream(fileName + "_solid", ios::out|ios::binary);
+
+    if (!inSnowflake_fileStream.is_open() || !vaporMass_fileStream.is_open() || !liquidMass_fileStream.is_open() || !solidMass_fileStream.is_open())
+        throw runtime_error("Could not open file");
+
+
+    for (size_t i=0; i<latticeSize; i++) {
+        for (size_t j=0; j<latticeSize; j++) {
+            const Cell& cell = (*this)[i][j];
+
+            inSnowflake_fileStream.write( (char*) &(cell.inSnowflake_before), sizeof(cell.inSnowflake_before) );
+            liquidMass_fileStream.write( (char*) &(cell.liquidMass_before), sizeof(cell.liquidMass_before) );
+            vaporMass_fileStream.write( (char*) &(cell.vaporMass_before), sizeof(cell.vaporMass_before) );
+            solidMass_fileStream.write( (char*) &(cell.solidMass_before), sizeof(cell.solidMass_before) );
+        }
     }
 }
