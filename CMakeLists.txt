@@ -1,2 +1,2 @@
-project(helloworld)
-add_executable(program helloworld.cpp)
+project(SnowflakeGeneration)
+add_executable(snowflake main.cpp)
