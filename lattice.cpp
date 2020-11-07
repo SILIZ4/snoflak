@@ -41,9 +41,10 @@ void Lattice::setDensityOutsideSnowflake() {
 
 
 list<pair<long int, long int>> Lattice::getNeighboursIndicesOf(long int i, long int j) const{
+    int parity = i % 2;
 
     list<pair<long int, long int>> neighbours {
-        {i-1, j}, {i-1, j+1}, {i, j-1}, {i, j+1}, {i+1, j}, {i+1, j+1}
+        {i, j}, {i-1, j+parity}, {i-1, j+1+parity}, {i, j-1}, {i, j+1}, {i+1, j+parity}, {i+1, j+1+parity}
     };
 
     filterInvalidIndices(neighbours);
