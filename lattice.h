@@ -33,6 +33,8 @@ class Lattice: public std::vector<std::vector<Cell>>{
         Lattice(size_t size, double density, std::map<std::string, double> parameters);
 
         void updateBoundaryAndComplementOfClosure();
+        void updateValuesOnBoundary();
+        void updateValuesOnComplementOfClosure();
 
         void diffuse();
         void freeze();
