@@ -17,10 +17,22 @@ struct Cell {
 class Lattice: public std::vector<std::vector<Cell>>{
     size_t latticeSize;
     double density;
-    
+
+
+    std::list<std::pair<size_t, size_t>> boundary;
+    std::list<std::pair<size_t, size_t>> complementOfClosure;
 
     public:
         Lattice(size_t size, double density);
+
+        void updateBoundaryAndComplementOfClosure();
+
+        void diffuse();
+        void freeze();
+        void attach();
+        void melt();
+        void addNoise();
+
 
     private:
         void freezeCenter();
@@ -29,14 +41,6 @@ class Lattice: public std::vector<std::vector<Cell>>{
         std::list<std::pair<long int, long int>> getNeighboursIndicesOf(long int i, long int j) const;
         void filterInvalidIndices(std::list<std::pair<long int, long int>> &indexList) const;
 
-        std::list<Cell> getSnowflakeBoundary() const;
-        std::list<Cell> getClosureComplement() const;
-
-        void diffuse();
-        void freeze();
-        void attach();
-        void melt();
-        void addNoise();
 };
 
 #endif

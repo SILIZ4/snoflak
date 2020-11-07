@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <math.h>
+#include <algorithm>
 
 #include "lattice.h"
 
@@ -55,4 +56,37 @@ void Lattice::filterInvalidIndices(std::list<std::pair<long int, long int>> &ind
                             auto j = indices.second;
                             return (i < 0) || (j < 0) || (i > latticeSize-1) || (j > latticeSize-1);
                         } );
+}
+
+
+void Lattice::updateBoundaryAndComplementOfClosure() {
+    boundary.clear();
+    complementOfClosure.clear();
+
+
+    std::list<std::pair<long int, long int>> neighbours;
+    bool inBoundary;
+
+    for (size_t i=0; i<latticeSize; i++) {
+        for (size_t j=0; j<latticeSize; j++) {
+            if ( (*this)[i][j].inSnowflake == true )
+                continue;
+
+
+            neighbours = getNeighboursIndicesOf(i, j);
+            // possiblity of using any_of and lambda function
+            for (auto& neighbour: neighbours){
+                if ( (*this)[neighbour.first][neighbour.second].inSnowflake == true ) {
+                    inBoundary = true;
+                    break;
+                }
+            }
+
+            if(inBoundary)
+                boundary.push_back({i, j});
+            else
+                complementOfClosure.push_back({i, j});
+
+        }
+    }
 }
