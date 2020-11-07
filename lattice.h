@@ -7,10 +7,15 @@
 
 
 struct Cell {
-    bool inSnowflake = false;
-    double vaporMass = 0;
-    double solidMass = 0;
-    double liquidMass = 0;
+    bool inSnowflake_before= false;
+    double vaporMass_before = 0;
+    double solidMass_before = 0;
+    double liquidMass_before = 0;
+
+    bool inSnowflake_after = false;
+    double vaporMass_after = 0;
+    double solidMass_after = 0;
+    double liquidMass_after = 0;
 };
 
 

@@ -21,8 +21,8 @@ Lattice::Lattice(size_t size, double density): latticeSize(size) {
 void Lattice::freezeCenter(){
     size_t middle = ceil(latticeSize/2);
     
-    (*this)[middle][middle].inSnowflake = true;
-    (*this)[middle][middle].solidMass = 1;
+    (*this)[middle][middle].inSnowflake_before = true;
+    (*this)[middle][middle].solidMass_before = 1;
 }
 
 void Lattice::setDensityOutsideSnowflake() {
@@ -32,8 +32,8 @@ void Lattice::setDensityOutsideSnowflake() {
         for (size_t j=i+1; j<latticeSize; j++){
 
             if (i != middle && j != middle) {
-                (*this)[i][j].vaporMass = density;
-                (*this)[j][i].vaporMass = density;
+                (*this)[i][j].vaporMass_before = density;
+                (*this)[j][i].vaporMass_before = density;
             }
         }
     }
@@ -70,14 +70,14 @@ void Lattice::updateBoundaryAndComplementOfClosure() {
 
     for (size_t i=0; i<latticeSize; i++) {
         for (size_t j=0; j<latticeSize; j++) {
-            if ( (*this)[i][j].inSnowflake == true )
+            if ( (*this)[i][j].inSnowflake_before == true )
                 continue;
 
 
             neighbours = getNeighboursIndicesOf(i, j);
             // possiblity of using any_of and lambda function
             for (auto& neighbour: neighbours){
-                if ( (*this)[neighbour.first][neighbour.second].inSnowflake == true ) {
+                if ( (*this)[neighbour.first][neighbour.second].inSnowflake_before == true ) {
                     inBoundary = true;
                     break;
                 }
@@ -89,5 +89,21 @@ void Lattice::updateBoundaryAndComplementOfClosure() {
                 complementOfClosure.push_back({i, j});
 
         }
+    }
+}
+
+void Lattice::diffuse() {
+    list<pair<long int, long int>> neighbours;
+    double sum;
+
+    for (auto& cell: complementOfClosure) {
+        neighbours = getNeighboursIndicesOf(cell.first, cell.second);
+
+        for (auto& neighbour: neighbours){
+            sum += (*this)[neighbour.first][neighbour.second].vaporMass_before;
+        }
+        sum += (7-neighbours.size()) * (*this)[cell.first][cell.second].vaporMass_before;
+
+        (*this)[cell.first][cell.second].liquidMass_after = sum/7;
     }
 }
