@@ -14,7 +14,7 @@ Lattice::Lattice(size_t size, double density): latticeSize(size) {
 
     resize(size, vector<Cell>(size));
     freezeCenter();
-    setDensity();
+    setDensityOutsideSnowflake();
 }
 
 void Lattice::freezeCenter(){
@@ -24,12 +24,35 @@ void Lattice::freezeCenter(){
     (*this)[middle][middle].solidMass = 1;
 }
 
-void Lattice::setDensity(){
+void Lattice::setDensityOutsideSnowflake() {
+    size_t middle = ceil(latticeSize/2);
+
     for (size_t i=0; i<latticeSize; i++){
         for (size_t j=i+1; j<latticeSize; j++){
-            
-            (*this)[i][j].vaporMass = density;
-            (*this)[j][i].vaporMass = density;
+
+            if (i != middle && j != middle) {
+                (*this)[i][j].vaporMass = density;
+                (*this)[j][i].vaporMass = density;
+            }
         }
     }
+}
+
+
+list<pair<long int, long int>> Lattice::getNeighboursIndicesOf(long int i, long int j) const{
+
+    list<pair<long int, long int>> neighbours {
+        {i-1, j}, {i-1, j+1}, {i, j-1}, {i, j+1}, {i+1, j}, {i+1, j+1}
+    };
+
+    filterInvalidIndices(neighbours);
+    return neighbours;
+}
+
+void Lattice::filterInvalidIndices(std::list<std::pair<long int, long int>> &indexList) const{
+    indexList.remove_if( [&](const std::pair<long int, long int> indices) -> bool {
+                            auto i = indices.first;
+                            auto j = indices.second;
+                            return (i < 0) || (j < 0) || (i > latticeSize-1) || (j > latticeSize-1);
+                        } );
 }
