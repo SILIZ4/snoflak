@@ -166,7 +166,7 @@ void Lattice::attach() {
         }
 
         condition1 = (numberOfNeighboursInSnowflake == 1 || numberOfNeighboursInSnowflake == 2) && cell.liquidMass_before >= parameters["beta"];
-        condition2 = numberOfNeighboursInSnowflake >= 3 && cell.liquidMass_before >= 1 ;//&& sumOfVaporMass < parameters["theta"] && cell.liquidMass_before >= parameters["alpha"];
+        condition2 = numberOfNeighboursInSnowflake >= 3 && sumOfVaporMass < parameters["theta"] && cell.liquidMass_before >= parameters["alpha"]; // && cell.liquidMass_before >= 1 ;
         condition3 = numberOfNeighboursInSnowflake >= 4;
         if (condition1 || condition2 || condition3) {
             cell.inSnowflake_after = true;
