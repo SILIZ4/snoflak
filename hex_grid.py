@@ -1,32 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.patches import RegularPolygon
+from matplotlib.collections import PolyCollection
 
 
-def hex_grid(mat):
-    _, ax = plt.subplots(1)
-    ax.set_aspect('equal')
-
-    norm = np.max(mat)
-    for i in range(mat.shape[0]):
-        for j in range(mat.shape[1]):
-
-            plot_hex(ax, i, j, mat[i, j]/norm)
-
-    plt.axis('off')
-    plt.autoscale(enable = True)
-    plt.show()
-
-
-def plot_hex(ax, i, j, value):
+def hex_grid(mat, cmap=None, vmin=0, vmax=1):
+    shape = mat.shape
+    i, j = np.meshgrid(range(shape[0]), range(shape[1]))
+    i, j = i.flatten(), j.flatten()
     x, y = i + (j+1) % 2 / 2, j * np.sqrt(3) / 2
-    hex = RegularPolygon((x, y), numVertices=6, radius=1/np.sqrt(3), color=(value, value, value))
-    ax.add_patch(hex)
+    centers = np.array([x, y]).T
+    offsets = np.zeros((6, shape[0] * shape[1], 2))
+    for i in range(6):
+        offsets[i, :, 0] = np.sin(2 * np.pi * i / 6) / np.sqrt(3) * 1.01
+        offsets[i, :, 1] = np.cos(2 * np.pi * i / 6) / np.sqrt(3) * 1.01
+    verts = centers + offsets
+    verts = np.swapaxes(verts, 0, 1)
 
+    z = mat.flatten()
 
-if __name__ == "__main__":
-    x = np.arange(0, 10)
-    X, Y = np.meshgrid(x, x)
-    mat = (Y + X % 2) / 3 % 1
+    fig, ax = plt.subplots()
 
-    hex_grid(mat)
+    coll = PolyCollection(verts, array=z, cmap=cmap)
+    ax.add_collection(coll)
+    ax.autoscale_view()
+
+    fig.colorbar(coll, ax=ax)
+
+    plt.show()

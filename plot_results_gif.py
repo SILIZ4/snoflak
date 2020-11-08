@@ -33,6 +33,8 @@ def view_snoflak_gif(number_iter):
         plt.imshow(dataframes[i].T, cmap="Blues", vmin=0, vmax=max_val)
         plt.colorbar()
         plt.savefig(str(i+1))
+
+        #hex_grid(data,cmap="Blues", vmin=0, vmax=max_val)
         plt.clf()
 
         frame.append(PIL.Image.open(str(i+1) + ".png"))
