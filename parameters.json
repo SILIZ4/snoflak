@@ -5,35 +5,28 @@
     //Number of timesteps
     "iterations": 100,
 
-    //Skips for exports (1 for no skip)
+    //Skipped frames for exporting iterations (remove to avoid saving frames)
     "frameskips": 1,
 
     //Prefix for exported data frames
-    "filepath_prefix": "frames/snowflake_",
+    "filepath_prefix": "frames/snowflake",
 
     //PHYSICAL PARAMETERS
 
     //Initial uniform vapour density on the domain
     "rho": 0.58,
-
     //Attachment parameter
     "beta": 2,
-
     //Knife-edge instability parameter (liquid)
     "alpha": 0.8,
-
     //Knife-edge instability parameter (vapour)
     "theta": 0.011,
-
     //Freezing parameter
     "kappa": 0.1,
-
     //Evaporation parameter
     "mu": 0.01,
-
     //Melting parameter
     "gamma": 0.00005,
-
     //Random perturbation parameter
     "sigma": 0.0000
 }
