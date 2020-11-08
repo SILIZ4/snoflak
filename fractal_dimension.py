@@ -4,10 +4,12 @@ from matplotlib import pyplot
 from hex_grid import hex_grid
 
 
+snowflake_file = "test_fractal/snowflake_5000_liquid"
+
 # Since liquid mass is present almost everywhere along the boundary,
 # it's a good approximation of it, so we can use the liquid mass map
 # to compute fractal dimension of the snowflake's boundary
-with open("test_fractal/snowflake_5000_liquid", "rb") as file_stream:
+with open(snowflake_file, "rb") as file_stream:
     data = np.fromfile(file_stream, dtype=np.double).reshape(500, 500)
 data[data>0]=1
 
@@ -38,5 +40,5 @@ for k in range(0,len(divisions)):
 # Box-counting dimension: lim eps->0 [log N(eps) / log(1/eps)]
 dim, _ = np.polyfit(np.log(np.reciprocal(EPS)).flatten(),np.log(NEPS).flatten(),1)
 
-print(dim)
+print("Fractal dimension: ", dim)
 hex_grid(data, cmap="binary")

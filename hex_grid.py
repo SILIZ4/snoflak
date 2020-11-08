@@ -11,6 +11,7 @@ def hex_grid(mat, cmap=None, file_name=None):
     x, y = i + (j+1) % 2 / 2, j * np.sqrt(3) / 2
     centers = np.array([x, y]).T
     offsets = np.zeros((6, shape[0] * shape[1], 2))
+
     for i in range(6):
         offsets[i, :, 0] = np.sin(2 * np.pi * i / 6) / np.sqrt(3) * 1.01
         offsets[i, :, 1] = np.cos(2 * np.pi * i / 6) / np.sqrt(3) * 1.01
