@@ -2,5 +2,5 @@ mkdir build
 cd build
 cmake ..
 make
-mv /.snowflake ../snowflake
+mv ./snowflake ../snowflake
 cd ..
