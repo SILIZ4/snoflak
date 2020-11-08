@@ -70,30 +70,30 @@ void Lattice::updateBoundaryAndComplementOfClosure() {
     std::list<std::pair<long int, long int>> neighbours;
     bool inBoundary;
 
-    for (size_t i=0; i<latticeSize; i++) {
-        for (size_t j=0; j<latticeSize; j++) {
-            inBoundary = false;
+        for (size_t i=0; i<latticeSize; i++) {
+            for (size_t j=0; j<latticeSize; j++) {
+                inBoundary = false;
 
-            if ( (*this)[i][j].inSnowflake_before == true )
-                continue;
+                if ( (*this)[i][j].inSnowflake_before == true )
+                    continue;
 
 
-            neighbours = getNeighboursIndicesOf(i, j);
-            // possiblity of using any_of and lambda function
-            for (auto& neighbour: neighbours){
-                if ( (*this)[neighbour.first][neighbour.second].inSnowflake_before ) {
-                    inBoundary = true;
-                    break;
+                neighbours = getNeighboursIndicesOf(i, j);
+                // possiblity of using any_of and lambda function
+                for (auto& neighbour: neighbours){
+                    if ( (*this)[neighbour.first][neighbour.second].inSnowflake_before ) {
+                        inBoundary = true;
+                        break;
+                    }
                 }
+
+                if(inBoundary)
+                    boundary.push_back({i, j});
+                else
+                    complementOfClosure.push_back({i, j});
+
             }
-
-            if(inBoundary)
-                boundary.push_back({i, j});
-            else
-                complementOfClosure.push_back({i, j});
-
         }
-    }
 }
 
 void Lattice::diffuse() {
@@ -166,7 +166,7 @@ void Lattice::attach() {
         }
 
         condition1 = (numberOfNeighboursInSnowflake == 1 || numberOfNeighboursInSnowflake == 2) && cell.liquidMass_before >= parameters["beta"];
-        condition2 = numberOfNeighboursInSnowflake >= 3 && sumOfVaporMass < parameters["theta"] && cell.liquidMass_before >= parameters["alpha"];//(cell.liquidMass_before >= 1 || (sumOfVaporMass < parameters["theta"] && cell.liquidMass_before >= parameters["alpha"]));
+        condition2 = numberOfNeighboursInSnowflake >= 3 && cell.liquidMass_before >= 1 ;//&& sumOfVaporMass < parameters["theta"] && cell.liquidMass_before >= parameters["alpha"];
         condition3 = numberOfNeighboursInSnowflake >= 4;
         if (condition1 || condition2 || condition3) {
             cell.inSnowflake_after = true;

@@ -6,8 +6,8 @@ cmake-build-debug/
 frames/
 gifs/
 
+
 snowflake
-frames10000
 
 *.json
 !parameters.json
