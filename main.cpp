@@ -69,7 +69,7 @@ int main(int argc, char* argv[]){
         lattice.freeze();
         lattice.attach();
         lattice.melt();
-        //lattice.addNoise();
+        lattice.addNoise();
 
 
         if (skipFrames) {
