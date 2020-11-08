@@ -4,7 +4,7 @@ from matplotlib.collections import PolyCollection
 from matplotlib.patches import RegularPolygon
 
 
-def hex_grid(mat, cmap=None):
+def hex_grid(mat, cmap=None, file_name=None):
     shape = mat.shape
     i, j = np.meshgrid(range(shape[0]), range(shape[1]))
     i, j = i.flatten(), j.flatten()
@@ -27,15 +27,22 @@ def hex_grid(mat, cmap=None):
     plt.axis('off')
     plt.autoscale(enable = True)
     fig.subplots_adjust(bottom=-0.06, top=1.06, left=-0.06, right=1.06)
+
+    if file_name:
+        plt.savefig(file_name)
     plt.show()
 
 
 if __name__ == "__main__":
-    with open("snowflake_5000_vapor", "rb") as file_stream:
-        data1 = np.fromfile(file_stream, dtype=np.double).reshape(500, 500)
-    with open("snowflake_5000_solid", "rb") as file_stream:
-        data2 = np.fromfile(file_stream, dtype=np.double).reshape(500, 500)
-    with open("snowflake_5000_liquid", "rb") as file_stream:
-        data3 = np.fromfile(file_stream, dtype=np.double).reshape(500, 500)
+    folders = ["figure11a/", "figure11b/", "figure11c/", "figure11d/", "figure11e/"]
+    frame_number = 4000
 
-    hex_grid(data1+data2+data3, cmap="Blues")
+    for folder in folders:
+        with open(folder+"snowflake_{}_vapor".format(frame_number), "rb") as file_stream:
+            data1 = np.fromfile(file_stream, dtype=np.double).reshape(600, 600)
+        with open(folder+"snowflake_{}_solid".format(frame_number), "rb") as file_stream:
+            data2 = np.fromfile(file_stream, dtype=np.double).reshape(600, 600)
+        with open(folder+"snowflake_{}_liquid".format(frame_number), "rb") as file_stream:
+            data3 = np.fromfile(file_stream, dtype=np.double).reshape(600, 600)
+
+        hex_grid(data1+data2+data3, cmap="Blues", file_name="figures/"+folder[:-1]+".png")
