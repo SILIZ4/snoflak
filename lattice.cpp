@@ -6,6 +6,8 @@
 
 #include "lattice.h"
 
+#include <iostream>
+
 
 using namespace std;
 
@@ -31,14 +33,12 @@ void Lattice::setDensityOutsideSnowflake() {
     size_t middle = ceil(latticeSize/2);
 
     for (size_t i=0; i<latticeSize; i++){
-        for (size_t j=i+1; j<latticeSize; j++){
-
-            if (i != middle && j != middle) {
-                (*this)[i][j].vaporMass_before = parameters["rho"];
-                (*this)[j][i].vaporMass_before = parameters["rho"];
-            }
+        for (size_t j=i; j<latticeSize; j++){
+            (*this)[i][j].vaporMass_before = parameters["rho"];
+            (*this)[j][i].vaporMass_before = parameters["rho"];
         }
     }
+    (*this)[middle][middle].vaporMass_before = 0;
 }
 
 
@@ -72,6 +72,8 @@ void Lattice::updateBoundaryAndComplementOfClosure() {
 
     for (size_t i=0; i<latticeSize; i++) {
         for (size_t j=0; j<latticeSize; j++) {
+            inBoundary = false;
+
             if ( (*this)[i][j].inSnowflake_before == true )
                 continue;
 
@@ -99,11 +101,15 @@ void Lattice::diffuse() {
     double sum;
 
 
+    bool inBoundary = false;
     for (auto indices=complementOfClosure.begin(); indices!=boundary.end(); indices++) {
+        sum = 0;
+
         if (indices == complementOfClosure.end()) {
             if (boundary.empty())
                 break;
             indices = boundary.begin();
+            inBoundary = true;
         }
 
         neighbours = getNeighboursIndicesOf(indices->first, indices->second);
@@ -116,7 +122,7 @@ void Lattice::diffuse() {
         }
         sum += (7-neighbours.size()) * (*this)[indices->first][indices->second].vaporMass_before;
 
-        (*this)[indices->first][indices->second].vaporMass_after = sum/7;
+        (*this)[indices->first][indices->second].vaporMass_after = sum/7.0;
     }
 
     updateValuesOnBoundary();
