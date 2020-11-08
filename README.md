@@ -1,5 +1,7 @@
 # snoflak
 
+![Zoom on our snowflake](zoom.jpg)
+
 *It's Christmas let's go home!* The main goal of our project is to reproduce the results of [this paper on snowflake growth simulation](http://psoup.math.wisc.edu/papers/h2l.pdf) in an object-oriented `C++` code. We also implemented a box-counting algorithm to calculate the fractal dimension of snowflakes boundaries in Python. [CMake](https://cmake.org/) and a C++ compiler (e.g. g++) are required to compile and produce snowflakes.
 
 ## Installation
