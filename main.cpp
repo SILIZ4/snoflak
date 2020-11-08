@@ -73,10 +73,11 @@ int main(int argc, char* argv[]){
 
 
         if (skipFrames) {
-            if (i % document["frameskips"].GetInt() == 0)
+            if (i % (document["frameskips"].GetInt()+1) == 0)
                 lattice.saveTo(document["filepath_prefix"].GetString()+std::to_string(i));
         }
     }
+    lattice.saveTo(document["filepath_prefix"].GetString());
 
     return 0;
 }
