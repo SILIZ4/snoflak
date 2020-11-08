@@ -7,9 +7,11 @@ def hex_grid(mat):
     _, ax = plt.subplots(1)
     ax.set_aspect('equal')
 
+    norm = np.max(mat)
     for i in range(mat.shape[0]):
         for j in range(mat.shape[1]):
-            plot_hex(ax, i, j, mat[i, j])
+
+            plot_hex(ax, i, j, mat[i, j]/norm)
 
     plt.axis('off')
     plt.autoscale(enable = True)
