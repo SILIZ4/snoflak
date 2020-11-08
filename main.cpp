@@ -23,7 +23,7 @@ static rapidjson::Document getJsonDocumentFromFile(const string& fileName){
     const char* fileContent = getCharFromString(tmp);
 
     rapidjson::Document document;
-    document.Parse(fileContent);
+    document.Parse<rapidjson::kParseCommentsFlag>(fileContent);
     delete[] fileContent;
     return document;
 }
@@ -74,7 +74,7 @@ int main(int argc, char* argv[]){
 
         if (skipFrames) {
             if (i % (document["frameskips"].GetInt()+1) == 0)
-                lattice.saveTo(document["filepath_prefix"].GetString()+std::to_string(i));
+                lattice.saveTo(document["filepath_prefix"].GetString()+std::string("_")+std::to_string(i));
         }
     }
     lattice.saveTo(document["filepath_prefix"].GetString());

@@ -245,7 +245,7 @@ void Lattice::saveTo(std::string fileName) const {
     ofstream solidMass_fileStream(fileName + "_solid", ios::out|ios::binary);
 
     if (!inSnowflake_fileStream.is_open() || !vaporMass_fileStream.is_open() || !liquidMass_fileStream.is_open() || !solidMass_fileStream.is_open())
-        throw runtime_error("Could not open file");
+        throw runtime_error("Could not open the file to export the lattice. Make sure the output folder was created.");
 
 
     for (size_t i=0; i<latticeSize; i++) {
