@@ -1,11 +1,13 @@
+__pycache__/
 build/
 cmake-build-debug/
 .idea/
-compile_commands.json
 .clangd/
 frames/
-snowflake
-__pycache__/
-snowflake
 gifs/
+
+snowflake
 frames10000
+
+*.json
+!parameters.json
