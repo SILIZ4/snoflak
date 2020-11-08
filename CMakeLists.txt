@@ -9,4 +9,6 @@ set(SRC_FILES
     lattice.cpp
 )
 
+add_subdirectory(rapidjson)
+
 add_executable(snowflake ${SRC_FILES})
